@@ -1,46 +1,78 @@
 import './App.css'
-import {useState} from "react";
+import {EyeInvisibleOutlined, EyeTwoTone} from '@ant-design/icons';
+import {Button, Input, Space} from 'antd';
+import {Field, Form, Formik, FormikProps} from "formik";
 
-function App() {
-    const [formState, setFormState] = useState({
-        email: '',
-        password: '',
-        confirmPassword: ''
-    })
+interface FormikInitialValues {
+    email: string,
+    password: string,
+    confirmPassword: string,
+}
 
+const AntDesignTextInput = (field: { field: any }) => {
     return (
         <>
-            <form className="fake-form">
-                <div className="input-wrapper">
-                    <label>Email
-                        <input
-                            type="email"
-                            name="email"
-                            onChange={(event) => setFormState({...formState, email: event.target.value})}/>
-                    </label>
-                </div>
-                <div className="input-wrapper">
-                    <label>
-                        Password
-                        <input
-                            type="password"
-                            name="password"
-                            onChange={(event) => setFormState({...formState, password: event.target.value})}
-                        />
-                    </label>
-                </div>
-                <div className="input-wrapper">
-                    <label>
-                        Confirm password
-                        <input
-                            type="password"
-                            name="confirm-password"
-                            onChange={(event) => setFormState({...formState, confirmPassword: event.target.value})}
-                        />
-                    </label>
-                </div>
-                <button type="submit">Submit</button>
-            </form>
+            <Input
+                size="large"
+                placeholder="email"
+                type="email"
+                {...field}
+            />
+        </>
+    )
+}
+
+const AntDesignPasswordInput = (field: { field: any }) => {
+    return <Input.Password
+        size="large"
+        placeholder="password"
+        iconRender={(visible) => (visible ? <EyeTwoTone/> : <EyeInvisibleOutlined/>)}
+        {...field}
+    />
+}
+
+const App = () => {
+    return (
+        <>
+            <Formik
+                initialValues={{
+                    email: '',
+                    password: '',
+                    confirmPassword: ''
+                }}
+                onSubmit={(values) => console.log("Form data:", values)}
+            >
+                {(props: FormikProps<FormikInitialValues>) => (
+                    <Form>
+                        <Space direction="vertical" size="middle">
+                            <Field
+                                id="email"
+                                name="email"
+                                value={props.values.email}
+                                onChange={props.handleChange}
+                                component={AntDesignTextInput}
+                            />
+                            <Field
+                                id="password"
+                                name="password"
+                                value={props.values.password}
+                                onChange={props.handleChange}
+                                component={AntDesignPasswordInput}
+                            />
+                            <Field
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                value={props.values.confirmPassword}
+                                onChange={props.handleChange}
+                                component={AntDesignPasswordInput}
+                            />
+                            <Button type="primary" htmlType="submit">
+                                Submit
+                            </Button>
+                        </Space>
+                    </Form>
+                )}
+            </Formik>
         </>
     )
 }
