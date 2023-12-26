@@ -14,7 +14,6 @@ const AntDesignTextInput = (field: { field: any }) => {
         <>
             <Input
                 size="large"
-                placeholder="email"
                 type="email"
                 {...field}
             />
@@ -25,7 +24,6 @@ const AntDesignTextInput = (field: { field: any }) => {
 const AntDesignPasswordInput = (field: { field: any }) => {
     return <Input.Password
         size="large"
-        placeholder="password"
         iconRender={(visible) => (visible ? <EyeTwoTone/> : <EyeInvisibleOutlined/>)}
         {...field}
     />
@@ -48,6 +46,7 @@ const App = () => {
                             <Field
                                 id="email"
                                 name="email"
+                                placeholder="email"
                                 value={props.values.email}
                                 onChange={props.handleChange}
                                 component={AntDesignTextInput}
@@ -55,6 +54,7 @@ const App = () => {
                             <Field
                                 id="password"
                                 name="password"
+                                placeholder="password"
                                 value={props.values.password}
                                 onChange={props.handleChange}
                                 component={AntDesignPasswordInput}
@@ -62,6 +62,7 @@ const App = () => {
                             <Field
                                 id="confirmPassword"
                                 name="confirmPassword"
+                                placeholder="confirm password"
                                 value={props.values.confirmPassword}
                                 onChange={props.handleChange}
                                 component={AntDesignPasswordInput}
