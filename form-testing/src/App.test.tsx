@@ -5,14 +5,20 @@ import App from "./App.tsx";
 import {userEvent} from "@testing-library/user-event";
 import {ValidationErrors} from "./enums.ts";
 
+const renderAppAndForm = () => {
+    const utils = render(<App/>);
+    const emailInput = screen.getByPlaceholderText('email') as HTMLInputElement;
+    const passwordInput = screen.getByPlaceholderText('password') as HTMLInputElement;
+    const confirmPasswordInput = screen.getByPlaceholderText('confirm password') as HTMLInputElement;
+    const privacyPolicyCheckbox = screen.getByLabelText('I agree to the privacy policy') as HTMLInputElement;
+    const formSubmitButton = screen.getByRole("button", {name: /Create account/i})
+
+    return { ...utils, emailInput, passwordInput, confirmPasswordInput, privacyPolicyCheckbox, formSubmitButton };
+}
+
 describe("Check form state on page loading", () => {
     test('Inputs don`t have any value on page loading', () => {
-        render(<App/>);
-
-        const emailInput = screen.getByPlaceholderText('email') as HTMLInputElement;
-        const passwordInput = screen.getByPlaceholderText('password') as HTMLInputElement;
-        const confirmPasswordInput = screen.getByPlaceholderText('confirm password') as HTMLInputElement;
-        const privacyPolicyCheckbox = screen.getByLabelText('I agree to the privacy policy') as HTMLInputElement;
+        const {emailInput, passwordInput, confirmPasswordInput, privacyPolicyCheckbox} = renderAppAndForm()
 
         expect(emailInput.value).toBe("")
 
@@ -28,9 +34,7 @@ describe("User events unit tests", () => {
     test('User can type email in form input', async () => {
         const user = userEvent.setup()
 
-        render(<App/>);
-
-        const emailInput = screen.getByPlaceholderText('email') as HTMLInputElement;
+        const {emailInput} = renderAppAndForm()
 
         await user.type(emailInput, "test@gmail.com")
 
@@ -39,9 +43,7 @@ describe("User events unit tests", () => {
     test('User can type password in form input', async () => {
         const user = userEvent.setup()
 
-        render(<App/>);
-
-        const passwordInput = screen.getByPlaceholderText('password') as HTMLInputElement;
+        const {passwordInput} = renderAppAndForm()
 
         await user.type(passwordInput, "123")
 
@@ -50,18 +52,14 @@ describe("User events unit tests", () => {
     test('User can type confirm password in form input', async () => {
         const user = userEvent.setup()
 
-        render(<App/>);
-
-        const confirmPasswordInput = screen.getByPlaceholderText('confirm password') as HTMLInputElement;
+        const {confirmPasswordInput} = renderAppAndForm()
 
         await user.type(confirmPasswordInput, "123")
 
         expect(confirmPasswordInput.value).toBe("123")
     })
     test('User can select checkbox', async () => {
-        render(<App/>);
-
-        const privacyPolicyCheckbox = screen.getByLabelText('I agree to the privacy policy') as HTMLInputElement;
+        const {privacyPolicyCheckbox} = renderAppAndForm()
 
         expect(privacyPolicyCheckbox).not.toBeChecked()
 
@@ -75,10 +73,7 @@ describe("Validation errors unit tests", () => {
     test('Show invalid email error message', async () => {
         const user = userEvent.setup()
 
-        render(<App/>);
-
-        const emailInput = screen.getByPlaceholderText('email') as HTMLInputElement;
-        const formSubmitButton = screen.getByRole("button", {name: /Create account/i})
+        const {emailInput, formSubmitButton} = renderAppAndForm()
         let emailErrorElement = screen.queryByText(ValidationErrors.invalidEmail)
 
         expect(emailErrorElement).not.toBeInTheDocument()
@@ -92,9 +87,7 @@ describe("Validation errors unit tests", () => {
         expect(emailErrorElement).toBeInTheDocument()
     })
     test('Show empty email error message', async () => {
-        render(<App/>);
-
-        const formSubmitButton = screen.getByRole("button", {name: /Create account/i})
+        const {formSubmitButton} = renderAppAndForm()
 
         let requiredEmailErrorElem = screen.queryByText(ValidationErrors.requiredEmail)
 
@@ -107,9 +100,7 @@ describe("Validation errors unit tests", () => {
         expect(requiredEmailErrorElem).toBeInTheDocument()
     })
     test('Show empty password error message', async () => {
-        render(<App/>);
-
-        const formSubmitButton = screen.getByRole("button", {name: /Create account/i})
+        const {formSubmitButton} = renderAppAndForm()
 
         let requiredPasswordErrorElem = screen.queryByText(ValidationErrors.requiredPassword)
 
@@ -124,10 +115,7 @@ describe("Validation errors unit tests", () => {
     test('Show validation error in case of too short password', async () => {
         const user = userEvent.setup()
 
-        render(<App/>);
-
-        const passwordInput = screen.getByPlaceholderText('password') as HTMLInputElement;
-        const formSubmitButton = screen.getByRole("button", {name: /Create account/i})
+        const {formSubmitButton, passwordInput} = renderAppAndForm()
 
         let passwordErrorElement = screen.queryByText(ValidationErrors.shortPassword)
 
@@ -143,9 +131,7 @@ describe("Validation errors unit tests", () => {
     })
     test('Show empty confirm email error message', async () => {
 
-        render(<App/>);
-
-        const formSubmitButton = screen.getByRole("button", {name: /Create account/i})
+        const {formSubmitButton} = renderAppAndForm()
 
         let requiredConfirmPasswordErrorElem = screen.queryByText(ValidationErrors.requiredConfirmPassword)
 
@@ -160,11 +146,7 @@ describe("Validation errors unit tests", () => {
     test('Show validation error in case of too short confirm password', async () => {
         const user = userEvent.setup()
 
-        render(<App/>);
-
-        const confirmPasswordInput = screen.getByPlaceholderText('confirm password') as HTMLInputElement;
-        const passwordInput = screen.getByPlaceholderText('password') as HTMLInputElement;
-        const formSubmitButton = screen.getByRole("button", {name: /Create account/i})
+        const {formSubmitButton, passwordInput, confirmPasswordInput} = renderAppAndForm()
 
         let confirmPasswordErrorElem = screen.queryByText(ValidationErrors.shortConfirmPassword)
 
@@ -182,11 +164,7 @@ describe("Validation errors unit tests", () => {
     test('Show validation error if the password and confirm password do not match', async () => {
         const user = userEvent.setup()
 
-        render(<App/>);
-
-        const formSubmitButton = screen.getByRole("button", {name: /Create account/i})
-        const passwordInput = screen.getByPlaceholderText('password') as HTMLInputElement;
-        const confirmPasswordInput = screen.getByPlaceholderText('confirm password') as HTMLInputElement;
+        const {formSubmitButton, passwordInput, confirmPasswordInput} = renderAppAndForm()
 
         let confirmPasswordErrorElem = screen.queryByText(ValidationErrors.passwordsMustMatch)
 
@@ -203,10 +181,7 @@ describe("Validation errors unit tests", () => {
     })
     test('Show unselect privacy policy checkbox validation message', async () => {
 
-        render(<App/>);
-
-        const privacyPolicyCheckbox = screen.getByLabelText('I agree to the privacy policy') as HTMLInputElement;
-        const formSubmitButton = screen.getByRole("button", {name: /Create account/i})
+        const {formSubmitButton, privacyPolicyCheckbox} = renderAppAndForm()
 
         let privacyPolicyErrorElem = screen.queryByText(ValidationErrors.requiredPrivacyPolicy)
 
