@@ -1,4 +1,4 @@
-import CreateAccountForm from "../../components/form/CreateAccountForm.tsx"
+import CreateAccountForm from "../../components/createAccountForm/CreateAccountForm.tsx"
 import styles from "./Register.module.css"
 
 const Register = () => {
